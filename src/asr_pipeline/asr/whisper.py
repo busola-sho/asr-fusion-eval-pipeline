@@ -1,11 +1,12 @@
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 from asr_pipeline.audio.resample_audio
+import torch
 
 class Whisper(ASRModel):
     def __init__(self, model_name="openai/whisper-large-v3"):
+        super().__init__()
         self.model="whisper"
         self.model_name=model_name
-        super().__init__(model_name, None)
 
     def load(self):
         self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -16,7 +17,7 @@ class Whisper(ASRModel):
     def transcribe(self, audio: np.ndarray, sample_rate: int) -> ASRHypothesis:
         target_rate=16000
 
-        audio = self.resample_audio(audio, sample_rate, target_rate)
+        audio = resample_audio(audio, sample_rate, target_rate)
 
         # design decision: I decided to chunk the audio due to context window issues
         chunk_length = 30 * target_rate
@@ -24,7 +25,6 @@ class Whisper(ASRModel):
         chunks = [audio[i:i + chunk_length] for i in range(0, len(audio), chunk_length)]
 
         full_transcript = ""
-        all_segments: List[Segment] = []
 
         for chunk in chunks:
             features = self.processor(
@@ -45,6 +45,6 @@ class Whisper(ASRModel):
             full_transcript += " " + decoded
 
         return ASRHypothesis(
-            model=self.model,
+            model=self.model_name,
             text=full_transcript.strip()
         )
