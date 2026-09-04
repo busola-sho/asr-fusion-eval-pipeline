@@ -3,8 +3,8 @@ import torch
 
 class Parakeet(ASRModel):
     def __init__(self, model_name="nvidia/parakeet-ctc-1.1b"):
-        super.__init__()
-        self.model="parakeet"
+        super().__init__()
+        self.model=None
         self.model_name=model_name
 
     def load():

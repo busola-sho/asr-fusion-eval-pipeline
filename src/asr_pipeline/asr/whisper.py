@@ -5,7 +5,7 @@ import torch
 class Whisper(ASRModel):
     def __init__(self, model_name="openai/whisper-large-v3"):
         super().__init__()
-        self.model="whisper"
+        self.model=None
         self.model_name=model_name
 
     def load(self):
