@@ -21,3 +21,6 @@ This shows a clearer separation of concerns.
   <img src="docs/pipeline_diagram_2.jpg" alt="Pipeline diagram" width="900">
 </p>
 
+## Design decisions (Some carried over from the research repo)
+1. Chunking the audio for Whisper and Parakeet due to context window limits. This was already implemented in Qwen3-ASR.
+2.
