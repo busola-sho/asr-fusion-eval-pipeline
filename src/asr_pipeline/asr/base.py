@@ -4,6 +4,7 @@ from asr_pipeline.utils.device import resolve_device
 
 import numpy as np
 
+
 class ASRModel(ABC):
     def __init__(self, device: Optional[str] = None):
         self.device = resolve_device()
