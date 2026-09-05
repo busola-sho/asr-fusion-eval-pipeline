@@ -7,8 +7,8 @@ from asr_pipeline.audio import resample_audio
 from asr_pipeline.schemas import ASRHypothesis
 
 class QwenASR(ASRModel):
-    def __init__(self, model_name="Qwen/Qwen3-ASR-1.7B"):
-        super().__init__()
+    def __init__(self, model_name="Qwen/Qwen3-ASR-1.7B", device : str | None = None):
+        super().__init__(device)
         self.model=None
         self.model_name=model_name
 

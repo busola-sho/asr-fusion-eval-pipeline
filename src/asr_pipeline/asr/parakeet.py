@@ -3,8 +3,8 @@ import torch
 from asr_pipeline.asr.base import ASRModel
 
 class Parakeet(ASRModel):
-    def __init__(self, model_name="nvidia/parakeet-ctc-1.1b"):
-        super().__init__()
+    def __init__(self, model_name="nvidia/parakeet-ctc-1.1b",  device : str | None = None):
+        super().__init__(device)
         self.model=None
         self.model_name=model_name
 

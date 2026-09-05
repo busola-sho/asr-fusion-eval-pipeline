@@ -9,7 +9,9 @@ def resolve_device(device: str | None = None) -> str:
         return "mps"
     return "cpu"
 
-def get_compute_type(device):
-    if device=="cuda":
-        return "float16"
-    return "int8"
+def resolve_dtype(device: str):
+    if device == "cuda":
+        return torch.float16
+    if device == "mps":
+        return torch.float16
+    return torch.float32

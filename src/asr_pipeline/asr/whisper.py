@@ -4,8 +4,8 @@ from asr_pipeline.asr.base import ASRModel
 import torch
 
 class Whisper(ASRModel):
-    def __init__(self, model_name="openai/whisper-large-v3"):
-        super().__init__()
+    def __init__(self, model_name="openai/whisper-large-v3", device : str | None = None):
+        super().__init__(device)
         self.model=None
         self.model_name=model_name
 
