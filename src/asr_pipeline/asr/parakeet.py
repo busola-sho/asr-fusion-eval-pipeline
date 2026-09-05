@@ -7,6 +7,7 @@ class Parakeet(ASRModel):
         super().__init__(device)
         self.model=None
         self.model_name=model_name
+        self.alias="parakeet"
 
     def load():
         self.model = AutoModelForCTC.from_pretrained(
@@ -36,6 +37,6 @@ class Parakeet(ASRModel):
             full_transcript += " " + transcript
 
         return ASRHypothesis(
-            model=self.model_name,
+            model=self.alias,
             text=full_transcript.strip()
         )

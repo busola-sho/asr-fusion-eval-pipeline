@@ -11,6 +11,7 @@ class QwenASR(ASRModel):
         super().__init__(device)
         self.model=None
         self.model_name=model_name
+        self.alias="qwen"
 
     def load(self)->None:
         self.model = Qwen3ASRModel.from_pretrained(
@@ -33,6 +34,6 @@ class QwenASR(ASRModel):
         )
     
         return ASRHypothesis(
-            model=self.model_name,
+            model=self.alias,
             text=result[0].text
         )

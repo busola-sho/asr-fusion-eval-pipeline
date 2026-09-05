@@ -8,6 +8,7 @@ class Whisper(ASRModel):
         super().__init__(device)
         self.model=None
         self.model_name=model_name
+        self.alias="whisper"
 
     def load(self):
         self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -17,7 +18,6 @@ class Whisper(ASRModel):
 
     def transcribe(self, audio: np.ndarray, sample_rate: int) -> ASRHypothesis:
         target_rate=16000
-
         audio = resample_audio(audio, sample_rate, target_rate)
 
         # design decision: I decided to chunk the audio due to context window issues
@@ -46,6 +46,6 @@ class Whisper(ASRModel):
             full_transcript += " " + decoded
 
         return ASRHypothesis(
-            model=self.model_name,
+            model=self.alias,
             text=full_transcript.strip()
         )
