@@ -1,4 +1,4 @@
-#utils/ollama_fuse.py
+# utils/ollama_fuse.py
 from ollama import client
 
 OLLAMA_HOST = "http://localhost:11434"

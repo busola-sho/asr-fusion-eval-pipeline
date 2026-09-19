@@ -8,7 +8,7 @@ Your task is to construct the most accurate transcript by selecting the best wor
 
 You MUST NOT:
 - Paraphrase or rewrite sentences
-- Add any words not present in any of the four transcripts
+- Add any words not present in any of the three transcripts
 - Change sentence structure or word order beyond individual word swaps
 
 Return only the final transcript, nothing else."""

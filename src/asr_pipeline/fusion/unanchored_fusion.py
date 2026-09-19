@@ -11,7 +11,7 @@ class Unanchored(FusionStrategy):
         self.num_predict = num_predict
         self.client = initialise_client()
 
-    def fuse (self, hypotheses: List(ASRHypothesis)):
+    def fuse(self, hypotheses: List(ASRHypothesis)):
         hyp_by_model={
             hyp.model:hyp.text for hyp in hypotheses
         }
