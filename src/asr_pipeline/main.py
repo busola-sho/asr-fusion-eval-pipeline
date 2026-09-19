@@ -3,7 +3,7 @@ from asr_pipeline.fusion import Unanchored
 
 def main():
     audio=...
-    sample_rate=...
+    sample_rate=16000
     
     pipeline=ASRFusionPipeline(
         models=[
@@ -12,7 +12,7 @@ def main():
         Whisper()
         ], 
         fusion_strategy=Unanchored()
-    )
+        )
 
     pipeline.load()
     pipeline.run(audio,sample_rate)
