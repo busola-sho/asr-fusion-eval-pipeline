@@ -10,12 +10,14 @@ def test_unanchored_fuse(monkeypatch):
         ASRHypothesis(model="parakeet", text="hello world"),
     ]
 
-    def fake_ollama_select(*args, **kwargs):
-        return "hello world"
+    monkeypatch.setattr(
+        "asr_pipeline.fusion.unanchored_fusion.initialise_client",
+        lambda:"fake-client",
+    )
 
     monkeypatch.setattr(
         "asr_pipeline.fusion.unanchored_fusion.ollama_select",
-        fake_ollama_select,
+        lambda *args, **kwargs: "hello world", #essentially it doesn't matter the arguments it accepts just return hello world
     )
 
     strategy = Unanchored()

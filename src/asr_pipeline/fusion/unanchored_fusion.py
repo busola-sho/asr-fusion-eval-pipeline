@@ -20,7 +20,7 @@ class Unanchored(FusionStrategy):
                                     self.model_name, 
                                     hyp_by_model, 
                                     self.num_predict,
-                                    UNANCHORED_FUSION_PROMPT
+                                    UNANCHORED_FUSION_PROMPT,
                                     retries=2
                                     )
         

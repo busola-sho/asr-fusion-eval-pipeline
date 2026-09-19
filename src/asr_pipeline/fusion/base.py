@@ -9,5 +9,5 @@ class FusionStrategy(ABC):
         self,
         hypotheses: List[ASRHypothesis],
     ) -> FusedTranscript:
-    ...
+        ...
 
