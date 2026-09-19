@@ -10,7 +10,7 @@ class ASRFusionPipeline():
             model.load()
 
     def run(self, audio, sample_rate):
-        hypotheses=[model.transcribe(audio) for model in self.asr_models]
+        hypotheses=[model.transcribe(audio, sample_rate) for model in self.asr_models]
         return self.fusion_strategy.fuse(hypotheses)
 
 

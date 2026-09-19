@@ -24,3 +24,4 @@ This shows a clearer separation of concerns.
 ## Design decisions (Some carried over from the research repo)
 1. Chunking the audio for Whisper and Parakeet due to context window limits. This was already implemented in Qwen3-ASR.
 2. Another was deciding either to run on float16 (for gpu) or int8 for cpu.
+3. In pipeline.py, loading the models once then run as many times as required next. Quite intuitive but was going to do otherwise initially.
