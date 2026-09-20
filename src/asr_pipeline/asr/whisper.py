@@ -2,6 +2,7 @@ from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 from asr_pipeline.audio import resample_audio
 from asr_pipeline.asr.base import ASRModel
 import torch
+from asr_pipeline.schemas import ASRHypothesis
 
 class Whisper(ASRModel):
     def __init__(self, model_name="openai/whisper-large-v3", device : str | None = None):

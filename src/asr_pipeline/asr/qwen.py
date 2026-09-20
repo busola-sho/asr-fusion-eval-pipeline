@@ -24,7 +24,7 @@ class QwenASR(ASRModel):
 
         audio = resample_audio(
             audio,
-            source_rate=sample_rate,
+            sample_rate=sample_rate,
             target_rate=target_rate,
         )
         # no need for chunking as qwen handles that manually

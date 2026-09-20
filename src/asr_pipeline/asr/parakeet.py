@@ -2,6 +2,7 @@ from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, AutoModelForC
 import torch 
 from asr_pipeline.asr.base import ASRModel
 from asr_pipeline.audio import resample_audio
+from asr_pipeline.schemas import ASRHypothesis
 
 class Parakeet(ASRModel):
     def __init__(self, model_name="nvidia/parakeet-ctc-1.1b",  device : str | None = None):

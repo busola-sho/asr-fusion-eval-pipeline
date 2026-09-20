@@ -6,7 +6,7 @@ from asr_pipeline.utils import ollama_select, initialise_client
 ASR_MODELS = ["qwen", "whisper", "parakeet"]
 
 class Unanchored(FusionStrategy):
-    def __init__(self, model_name: str = "gemma4", num_predict: int = 2048):
+    def __init__(self, model_name: str = "gemma4:12b", num_predict: int = 2048):
         self.model_name = model_name
         self.num_predict = num_predict
         self.client = initialise_client()

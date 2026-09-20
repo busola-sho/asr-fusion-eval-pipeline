@@ -12,6 +12,33 @@ from asr_pipeline.asr.parakeet import Parakeet
 from asr_pipeline.asr.whisper import Whisper
 from asr_pipeline.fusion import Unanchored
 
+from pydub import AudioSegment
+import io
+import numpy as np
+
+
+def load_audio(contents: bytes, filename: str):
+    suffix = filename.rsplit(".", 1)[-1].lower()
+
+    audio_segment = AudioSegment.from_file(
+        io.BytesIO(contents),
+        format=suffix,
+    )
+
+    # Force mono
+    audio_segment = audio_segment.set_channels(1)
+
+    sample_rate = audio_segment.frame_rate
+
+    samples = np.array(
+        audio_segment.get_array_of_samples()
+    ).astype(np.float32)
+
+    # Convert integer PCM samples to roughly [-1, 1]
+    max_value = float(1 << (8 * audio_segment.sample_width - 1))
+    samples = samples / max_value
+
+    return samples, sample_rate
 
 app = FastAPI(
     title="ASR Fusion Pipeline",
@@ -31,7 +58,6 @@ pipeline = ASRFusionPipeline(
     fusion_strategy=Unanchored(),
 )
 
-
 # Load expensive ASR models once
 pipeline.load_models()
 
@@ -39,20 +65,15 @@ pipeline.load_models()
 def health():
     return {"status": "ok"}
 
-
 @app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):
 
     contents = await file.read()
 
-    audio, sample_rate = sf.read(
-        io.BytesIO(contents),
-        dtype="float32",
+    audio, sample_rate = load_audio(
+        contents,
+        file.filename,
     )
-
-    # Stereo → mono
-    if audio.ndim > 1:
-        audio = np.mean(audio, axis=1)
 
     fused_transcript, segments, scores, evaluation = pipeline.run(
         audio=audio,

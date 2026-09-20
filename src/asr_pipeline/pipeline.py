@@ -21,7 +21,7 @@ class ASRFusionPipeline():
     client,
     sat,
     reference=None,
-    confidence_model="gemma4",
+    confidence_model="gemma4:12b",
     alignment_model="phi4:14b",
     ):
         hypotheses = [
