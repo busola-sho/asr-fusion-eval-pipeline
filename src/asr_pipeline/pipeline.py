@@ -23,39 +23,39 @@ class ASRFusionPipeline():
     reference=None,
     confidence_model="gemma4",
     alignment_model="phi4:14b",
-):
-    hypotheses = [
-        model.transcribe(audio, sample_rate)
-        for model in self.asr_models
-    ]
+    ):
+        hypotheses = [
+            model.transcribe(audio, sample_rate)
+            for model in self.asr_models
+        ]
 
-    fused_transcript = self.fusion_strategy.fuse(hypotheses)
+        fused_transcript = self.fusion_strategy.fuse(hypotheses)
 
-    segments = segment_transcript(
-        fused_transcript.text,
-        sat,
-    )
-
-    aligned_spans, alignment_methods = align_source_hypotheses(
-        client=client,
-        hypotheses=hypotheses,
-        segments=segments,
-        alignment_model=alignment_model,
-    )
-
-    scores = score_segments(
-        client=client,
-        model_name=confidence_model,
-        segments=segments,
-        aligned_spans=aligned_spans,
-    )
-
-    evaluation = None
-
-    if reference is not None and self.evaluator is not None:
-        evaluation = self.evaluator.evaluate(
-            prediction=fused_transcript.text,
-            reference=reference,
+        segments = segment_transcript(
+            fused_transcript.text,
+            sat,
         )
 
-    return fused_transcript, segments, scores, evaluation
+        aligned_spans, alignment_methods = align_source_hypotheses(
+            client=client,
+            hypotheses=hypotheses,
+            segments=segments,
+            alignment_model=alignment_model,
+        )
+
+        scores = score_segments(
+            client=client,
+            model_name=confidence_model,
+            segments=segments,
+            aligned_spans=aligned_spans,
+        )
+
+        evaluation = None
+
+        if reference is not None and self.evaluator is not None:
+            evaluation = self.evaluator.evaluate(
+                prediction=fused_transcript.text,
+                reference=reference,
+            )
+
+        return fused_transcript, segments, scores, evaluation

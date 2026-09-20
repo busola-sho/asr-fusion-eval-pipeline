@@ -1,5 +1,5 @@
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
-from asr_pipeline.audio.resample_audio
+from asr_pipeline.audio import resample_audio
 from asr_pipeline.asr.base import ASRModel
 import torch
 
