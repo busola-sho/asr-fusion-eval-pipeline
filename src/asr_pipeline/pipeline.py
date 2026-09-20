@@ -1,6 +1,7 @@
 from asr_pipeline.schemas import FusedTranscript
 from asr_pipeline.confidence.segment import segment_transcript
 from asr_pipeline.confidence.scorer import score_segments
+from asr_pipeline.confidence.align import align_source_hypotheses
 
 class ASRFusionPipeline():
     def __init__(self, models, fusion_strategy, sentence_confidence=None, evaluator=None):
@@ -45,14 +46,12 @@ class ASRFusionPipeline():
         )
 
         # 4. Find corresponding source-ASR evidence
-        aligned_spans, alignment_methods = (
-            align_source_hypotheses(
+        aligned_spans, alignment_methods = align_source_hypotheses(
                 client=client,
                 hypotheses=hypotheses,
                 segments=segments,
                 alignment_model=alignment_model,
             )
-        )
 
         # 5. Score each fused segment
         scores = score_segments(

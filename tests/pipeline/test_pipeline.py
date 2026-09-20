@@ -22,22 +22,51 @@ class FakeFusion:
     def fuse(self, hypotheses):
         return FusedTranscript(text="hello world")
 
-def test_pipeline_works_well():
+class FakeSaT:
+    def split(self, text):
+        return [text]
+
+def test_pipeline_works_well(monkeypatch):
     models=[
         FakeASR("qwen", "hello world"),
         FakeASR("parakeet", "hello world"),
     ]
     fusion=FakeFusion()
     audio=np.zeros(8000)
-    pipeline=ASRFusionPipeline(
-        models=models,
-        fusion_strategy=fusion
+
+    monkeypatch.setattr(
+    "asr_pipeline.pipeline.align_source_hypotheses",
+    lambda **kwargs: (
+        {
+            "qwen": ["hello world"],
+            "parakeet": ["hello world"],
+        },
+        {
+            "qwen": ["mechanical"],
+            "parakeet": ["mechanical"],
+        },
+    ),
     )
+
+    monkeypatch.setattr(
+        "asr_pipeline.pipeline.score_segments",
+        lambda **kwargs: [95.0],
+    )
+
+    pipeline=ASRFusionPipeline(models, fusion)
     pipeline.load_models()
-    output=pipeline.run(audio, 16000)
+    
+    output, segments, scores = pipeline.run(
+        audio=audio,
+        sample_rate=16000,
+        client=None,
+        sat=FakeSaT(),
+    )
 
     assert isinstance(output, FusedTranscript)
-    assert output.text=="hello world"
+    assert output.text == "hello world"
+    assert segments == ["hello world"]
+    assert scores == [95.0]
 
     
 
