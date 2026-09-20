@@ -1,4 +1,5 @@
 import re
+from ollama import Client
 
 NO_MATCH_MARKER = "[NO MATCH]"
 
@@ -95,3 +96,19 @@ def score_segment(
         except Exception:
             if attempt == retries:
                 return None
+
+def score_segments(
+    client: Client,
+    model_name: str,
+    segments: list[str],
+    aligned_spans: dict[str, list[str | None]],
+) -> list[float | None]:
+    scores=[]
+    for i in range(len(segments)):
+        local_spans={}
+        for model,spans in aligned_spans.items():
+            local_spans[model]=v[spans]
+        segment=segments[i]
+        score=score_segment(client, model_name, segment, local_spans)
+        scores.append(score)
+    return scores
