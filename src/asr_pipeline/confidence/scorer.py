@@ -107,7 +107,7 @@ def score_segments(
     for i in range(len(segments)):
         local_spans={}
         for model,spans in aligned_spans.items():
-            local_spans[model]=v[spans]
+            local_spans[model]=spans[i]
         segment=segments[i]
         score=score_segment(client, model_name, segment, local_spans)
         scores.append(score)
