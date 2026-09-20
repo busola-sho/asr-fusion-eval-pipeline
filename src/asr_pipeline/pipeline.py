@@ -15,56 +15,47 @@ class ASRFusionPipeline():
             model.load()
 
     def run(
-        self,
-        audio,
-        sample_rate,
-        client,
+    self,
+    audio,
+    sample_rate,
+    client,
+    sat,
+    reference=None,
+    confidence_model="gemma4",
+    alignment_model="phi4:14b",
+):
+    hypotheses = [
+        model.transcribe(audio, sample_rate)
+        for model in self.asr_models
+    ]
+
+    fused_transcript = self.fusion_strategy.fuse(hypotheses)
+
+    segments = segment_transcript(
+        fused_transcript.text,
         sat,
-        confidence_model="gemma4",
-        alignment_model="phi4:14b",
-    ):
+    )
 
-        # 1. Transcribe
-        hypotheses = [
-            model.transcribe(audio, sample_rate)
-            for model in self.asr_models
-        ]
+    aligned_spans, alignment_methods = align_source_hypotheses(
+        client=client,
+        hypotheses=hypotheses,
+        segments=segments,
+        alignment_model=alignment_model,
+    )
 
-        print("Hypotheses generated. Fusion next...")
+    scores = score_segments(
+        client=client,
+        model_name=confidence_model,
+        segments=segments,
+        aligned_spans=aligned_spans,
+    )
 
-        # 2. Fuse
-        fused_transcript = self.fusion_strategy.fuse(
-            hypotheses
+    evaluation = None
+
+    if reference is not None and self.evaluator is not None:
+        evaluation = self.evaluator.evaluate(
+            prediction=fused_transcript.text,
+            reference=reference,
         )
 
-        print("Fusion done. Commencing sentence confidence generation...")
-
-        # 3. Segment fused transcript
-        segments = segment_transcript(
-            fused_transcript.text,
-            sat,
-        )
-
-        # 4. Find corresponding source-ASR evidence
-        aligned_spans, alignment_methods = align_source_hypotheses(
-                client=client,
-                hypotheses=hypotheses,
-                segments=segments,
-                alignment_model=alignment_model,
-            )
-
-        # 5. Score each fused segment
-        scores = score_segments(
-            client=client,
-            model_name=confidence_model,
-            segments=segments,
-            aligned_spans=aligned_spans,
-        )
-
-        return fused_transcript, segments, scores
-
-
-
-
-
-    
+    return fused_transcript, segments, scores, evaluation

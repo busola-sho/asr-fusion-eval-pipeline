@@ -13,6 +13,11 @@ def main():
 
     client = Client(host="http://localhost:11434")
     sat = SaT("sat-3l")
+
+    evaluator = Evaluator(
+        client=client,
+        model_name="phi4:14b",
+    )
     
     pipeline=ASRFusionPipeline(
         models=[
@@ -24,13 +29,12 @@ def main():
         )
 
     pipeline.load_models()
-    fused_transcript, segments, scores = pipeline.run(
+    fused_transcript, segments, scores, evaluation = pipeline.run(
         audio=audio,
         sample_rate=sample_rate,
         client=client,
         sat=sat,
-        confidence_model="gemma4",
-        alignment_model="phi4:14b",
+        reference=reference,
     )
 
     print(fused_transcript.text)
@@ -38,8 +42,9 @@ def main():
     for segment, score in zip(segments, scores):
         print(segment, score)
 
-
-    print(result)
+    if evaluation is not None:
+        print("WER:", evaluation.wer)
+        print("Meaning severity:", evaluation.meaning_score)
 
 if __name__=="__main__":
     main()
