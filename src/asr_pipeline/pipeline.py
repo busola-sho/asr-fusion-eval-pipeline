@@ -1,6 +1,7 @@
 from asr_pipeline.schemas import FusedTranscript
 from asr_pipeline.confidence.segment import segment_transcript
 from asr_pipeline.confidence.scorer import score_segments
+
 class ASRFusionPipeline():
     def __init__(self, models, fusion_strategy, sentence_confidence=None, evaluator=None):
         self.asr_models=models
