@@ -1,6 +1,6 @@
 # asr-fusion-eval-pipeline
 
-A production-focused implementation of the ASR ensemble and evaluation pipeline developed during my MPhil research in collaboration with Police Scotland.
+A production-focused implementation of the ASR ensemble and evaluation pipeline developed during my MPhil research.
 
 The repo packages the research pipeline into a modular, testable system with:
 
