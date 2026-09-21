@@ -2,7 +2,7 @@ import io
 
 import numpy as np
 import soundfile as sf
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
 from ollama import Client
 from wtpsplit import SaT
 
@@ -11,7 +11,7 @@ from asr_pipeline.asr.qwen import QwenASR
 from asr_pipeline.asr.parakeet import Parakeet
 from asr_pipeline.asr.whisper import Whisper
 from asr_pipeline.fusion import Unanchored
-
+from asr_pipeline.evaluation.evaluator import Evaluator
 from pydub import AudioSegment
 import io
 import numpy as np
@@ -49,6 +49,11 @@ client = Client(host="http://localhost:11434")
 
 sat = SaT("sat-3l")
 
+evaluator = Evaluator(
+    client=client,
+    model_name="phi4:14b",
+)
+
 pipeline = ASRFusionPipeline(
     models=[
         QwenASR(),
@@ -56,6 +61,7 @@ pipeline = ASRFusionPipeline(
         Whisper(),
     ],
     fusion_strategy=Unanchored(),
+    evaluator=evaluator
 )
 
 # Load expensive ASR models once
@@ -66,8 +72,7 @@ def health():
     return {"status": "ok"}
 
 @app.post("/transcribe")
-async def transcribe(file: UploadFile = File(...)):
-
+async def transcribe(file: UploadFile = File(...), reference: str | None = Form(None)):
     contents = await file.read()
 
     audio, sample_rate = load_audio(
@@ -80,9 +85,10 @@ async def transcribe(file: UploadFile = File(...)):
         sample_rate=sample_rate,
         client=client,
         sat=sat,
+        reference=reference,
     )
 
-    return {
+    response = {
         "transcript": fused_transcript.text,
         "sentence_confidence": [
             {
@@ -92,3 +98,11 @@ async def transcribe(file: UploadFile = File(...)):
             for segment, score in zip(segments, scores)
         ],
     }
+
+    if evaluation is not None:
+        response["evaluation"] = {
+            "wer": evaluation.wer,
+            "severity_score": evaluation.severity_score
+        }
+
+    return response

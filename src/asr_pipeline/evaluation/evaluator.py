@@ -1,4 +1,4 @@
-from asr_pipeline.schemas import EvaluationResult
+from asr_pipeline.schemas import EvalResult
 from jiwer import wer
 from asr_pipeline.evaluation.meaning import score_meaning_alteration
 
@@ -12,7 +12,7 @@ class Evaluator:
         self,
         prediction: str,
         reference: str,
-    ) -> EvaluationResult:
+    ) -> EvalResult:
 
         wer_score = wer_score = wer(reference, prediction)
 
@@ -23,7 +23,7 @@ class Evaluator:
             hypothesis=prediction,
         )
 
-        return EvaluationResult(
+        return EvalResult(
             wer=wer_score,
-            meaning_score=meaning_score,
+            severity_score=meaning_score,
         )
