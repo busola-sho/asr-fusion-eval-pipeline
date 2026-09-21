@@ -1,6 +1,6 @@
 # asr-fusion-eval-pipeline
 
-A production-focused implementation of the ASR ensemble and evaluation pipeline developed during my MPhil research.
+A production-focused implementation of the ensemble and evaluation pipeline for high-stakes ASR developed during my MPhil research.
 
 The repo packages the research pipeline into a modular, testable system with:
 
